@@ -1,10 +1,10 @@
 import React from 'react';
 const ToDoView = (props) => {
   return (
-    <div>
+    <li>
     <input type='checkbox'/>
     {props.text}
-    </div>
+    </li>
   )
 }
 export default ToDoView
