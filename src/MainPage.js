@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ToDoView from './ToDoView'
 import EditButton from './EditButton'
+import { v4 as uuidv4 } from 'uuid';
 
 // page responsible for working with todos
 const MainPage = () => {
@@ -36,15 +37,14 @@ const MainPage = () => {
       {/* ToDoViews will be in an unordered list */}
       <ul>
         {/* render one view for every todo object */}
-        {todos.map((_, index) => {
+        {todos.map((todo, _) => {
           return (
-            <ToDoView key={index} index={index}
-              todo={todos[index]} editing={editing} toggleChecked={
+            <ToDoView key={todo.uuid} todo={todo} editing={editing} toggleChecked={
                 //checked is togglable
-                () => toggleCheckBox(index)
+                () => toggleCheckBox(todo.uuid)
               } delete={
                 //deletable
-                () => deleteTodo(index)
+                () => deleteTodo(todo.uuid)
               } />
           )
         }
@@ -57,23 +57,24 @@ const MainPage = () => {
   //add todo object with current text from state and not checked
   //also clear text state of this page
   function addToDo() {
-    setTodos([...todos, { text: text, checked: false }])
+    setTodos([...todos, {uuid: uuidv4(), text: text, checked: false }])
     setText('')
   }
   //for updating the text's state when the input is typed in
   function updateInput(event) {
     setText(event.target.value)
   }
-  //toggle checked by index
-  function toggleCheckBox(index) {
-    const updatedToDos = [...todos]
-    updatedToDos[index].checked = !todos[index].checked
+  //toggle checked by uuid
+  function toggleCheckBox(uuid) {
+    let updatedToDos = [...todos]
+    var foundToDo=todos.find(todo=>todo.uuid===uuid)
+    foundToDo.checked = !foundToDo.checked
     setTodos(updatedToDos)
   }
-  //delete by index
-  function deleteTodo(index) {
+  //delete by uuid
+  function deleteTodo(uuid) {
     let updatedToDos = [...todos]
-    updatedToDos.splice(index, 1)
+    updatedToDos=todos.filter(todo=>todo.uuid!==uuid)
     setTodos(updatedToDos)
     if (updatedToDos.length === 0) {
       setEditing(false)
